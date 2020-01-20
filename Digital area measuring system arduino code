@@ -1,0 +1,154 @@
+//lcd pin - RS-12, E-11, D4-6,D5-7,D6-8,D7-9
+//HC-SR05(1) pin- trig - 2, echo - 3
+//HC-SR05(2) pin- trig - 4, echo - 5
+
+#include <LiquidCrystal.h>
+int trigPin1=2;
+int echoPin1=3;
+int trigPin2=4;
+int echoPin2=5;
+int a=0;
+int b=0;
+
+LiquidCrystal lcd(11,10,6,7,8,9);//RS,E,D4,D5,D6,D7
+void setup() {
+
+  Serial.begin (9600);
+  lcd.begin(16,2);
+
+  pinMode(trigPin1, OUTPUT);
+
+  pinMode(echoPin1, INPUT);
+
+   pinMode(trigPin2, OUTPUT);
+
+  pinMode(echoPin2, INPUT);
+pinMode(12,OUTPUT);
+pinMode(13,OUTPUT);
+  lcd.clear();
+  lcd.setCursor(2,0);
+  lcd.print("DIGITAL AREA ");
+  lcd.setCursor(0,1);
+  lcd.print("MEASURING SYSTEM");
+  delay(4000);
+}
+
+
+
+void loop() {
+
+digitalWrite(12,LOW);
+digitalWrite(13,HIGH);
+
+  long duration1, distance1;
+
+  digitalWrite(trigPin1, LOW);
+
+  delayMicroseconds(2);
+
+  digitalWrite(trigPin1, HIGH);
+
+  delayMicroseconds(10); 
+
+  digitalWrite(trigPin1, LOW);
+
+  duration1 = pulseIn(echoPin1, HIGH);
+
+  distance1 = (duration1/2) / 29.1;
+  
+  lcd.clear();
+
+
+   if (distance1 >= 500 || distance1 <= 0){
+
+    Serial.println("Out of range");
+
+  }
+
+  else {
+
+    Serial.print ( "Sensor1  ");
+
+    Serial.print ( distance1);
+
+    Serial.println("cm");
+
+ lcd.setCursor(0,0);
+ lcd.print("L=");
+ lcd.setCursor(2,0);
+ lcd.print(distance1);
+  lcd.setCursor(4,0);
+ lcd.print("cm");
+ a=1;
+
+  }
+
+
+
+long duration2, distance2;
+
+  digitalWrite(trigPin2, LOW);
+
+  delayMicroseconds(2);
+
+  digitalWrite(trigPin2, HIGH);
+
+  delayMicroseconds(10);
+
+  digitalWrite(trigPin2, LOW);
+
+  duration2 = pulseIn(echoPin2, HIGH);
+
+  distance2= (duration2/2) / 29.1;
+
+
+
+   if (distance2 >= 500 || distance2 <= 0){
+
+    Serial.println("Out of range");
+
+  }
+
+  else {
+
+    Serial.print("Sensor2  ");
+
+    Serial.print(distance2);
+
+    Serial.println("cm");
+
+ lcd.setCursor(9,0);
+ lcd.print("W=");
+ lcd.setCursor(11,0);
+ lcd.print(distance2);
+ lcd.setCursor(14,0);
+ lcd.print("cm");
+ b=1;
+ 
+  }
+
+
+if(a==1&&b==1){
+
+
+lcd.setCursor(0,1);
+ 
+lcd.print("Area = ");
+Serial.print("Area = ");
+lcd.setCursor(7,1);
+lcd.print(distance1*distance2);
+lcd.setCursor(10,1);
+lcd.print("sqcm");
+Serial.print(distance1*distance2);
+Serial.print("\n");
+}
+
+else {
+lcd.print("Out of range ! ");
+
+}
+
+
+delay(500);
+}
+
